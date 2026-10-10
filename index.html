@@ -81,7 +81,7 @@ function makeObstacles(){
   ];
 }
 function reset(){
-  player={x:W/2,y:H/2,r:15,speed:205,angle:0};
+  player={x:W/2+65,y:H/2,r:15,speed:240,angle:0};
   shots=[]; enemies=[]; enemyShots=[]; particles=[];
   score=0;level=1;hp=100;spawnLeft=4;spawnTimer=0;
   running=false;started=false;paused=false;ended=false;
@@ -293,14 +293,14 @@ canvas.addEventListener("pointerdown",ev=>{
 });
 window.addEventListener("pointerup",()=>fireHeld=false);
 const movementKeys = {ArrowUp:"up", ArrowDown:"down", ArrowLeft:"left", ArrowRight:"right", KeyW:"w", KeyA:"a", KeyS:"s", KeyD:"d"};
-window.addEventListener("keydown",ev=>{
+document.addEventListener("keydown",ev=>{
   const k=ev.key.toLowerCase();
   if(movementKeys[ev.code] || ["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k)) ev.preventDefault();
   if(movementKeys[ev.code]) keys.add(movementKeys[ev.code]);
   keys.add(k);
   if(k===" "){shoot();}
 });
-window.addEventListener("keyup",ev=>{
+document.addEventListener("keyup",ev=>{
   keys.delete(ev.key.toLowerCase());
   if(movementKeys[ev.code]) keys.delete(movementKeys[ev.code]);
 });
