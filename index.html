@@ -123,7 +123,7 @@ function makeHero(style=0){
  for(const s of [-1,1]){const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.19,12,10),gold);shoulder.position.set(s*.43,1.52,-.01);g.add(shoulder);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.48,5,8),suit);arm.position.set(s*.48,1.27,-.02);arm.castShadow=true;g.add(arm);const glove=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),darkSuit);glove.position.set(s*.49,.94,-.04);g.add(glove);const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.145,.52,5,8),darkSuit);leg.position.set(s*.19,.42,0);g.add(leg);const boot=new THREE.Mesh(new THREE.BoxGeometry(.24,.13,.32),gold);boot.position.set(s*.19,.13,-.04);g.add(boot)}
  const glow=new THREE.Mesh(new THREE.TorusGeometry(.58,.045,6,28),cyan);glow.rotation.x=Math.PI/2;glow.position.y=.08;g.add(glow);return g;
 }
-const hero=makeHero(selectedCharacter);hero.position.set(0,0,8);
+const hero=makeHero(selectedCharacter);scene.add(hero);hero.position.set(0,0,8);
 function applyCharacterStyle(index){const replacement=makeHero(index);while(hero.children.length){hero.remove(hero.children[0])}while(replacement.children.length){const part=replacement.children[0];replacement.remove(part);hero.add(part)}scene.remove(replacement);}
 const obstacles=[];
 for(let i=0;i<22;i++){const x=(Math.random()-.5)*52,z=(Math.random()-.5)*52;if(Math.hypot(x,z-8)<7)continue;const w=1.5+Math.random()*2.5,h=1+Math.random()*3.2,d=1.5+Math.random()*2.5;const b=box(w,h,d,i%3===0?mat(0x927f68):dark,x,h/2,z);obstacles.push({x,z,w,d});}
