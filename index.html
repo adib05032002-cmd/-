@@ -83,7 +83,7 @@ window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys.add(k);if
 window.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
 canvas.addEventListener('click',()=>{if(playing)shoot()});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
-canvas.addEventListener('mousemove',e=>{if(!playing||!document.pointerLockElement)return;yaw-=e.movementX*.003;pitch=Math.max(-.15,Math.min(.55,pitch+e.movementY*.002)});
+canvas.addEventListener('mousemove',e=>{if(!playing||!document.pointerLockElement)return;yaw-=e.movementX*.003;pitch=Math.max(-.15,Math.min(.55,pitch+e.movementY*.002));});
 canvas.addEventListener('click',()=>{if(playing&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 function clampArena(o){o.x=Math.max(-32,Math.min(32,o.x));o.z=Math.max(-32,Math.min(32,o.z))}
 function update(dt){
