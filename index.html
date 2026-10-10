@@ -141,6 +141,30 @@ h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px);color:#7cf6df}#card p{line-hei
 #gameLootHint.show{display:block}
 #hud #walletHud{color:#ffdc57}
 
+
+/* UI refresh: clearer panels, active states, central hero stage */
+#cover.final-lobby .lobby-section{background:linear-gradient(145deg,rgba(19,39,56,.97),rgba(5,14,24,.97));border:1px solid #d8bd6477;border-radius:10px;box-shadow:0 8px 24px #0008,inset 0 1px #ffffff0d;backdrop-filter:blur(8px)}
+#cover.final-lobby .lobby-section h3{display:flex;align-items:center;gap:7px;padding-bottom:8px;border-bottom:1px solid #e4c45b44;font-size:14px;color:#ffe17a}
+#cover.final-lobby .lobby-action{border-radius:7px;text-align:center;background:linear-gradient(100deg,#1b3549,#122538);border-color:#6f8b9c88;transition:background .15s,border-color .15s,transform .15s}
+#cover.final-lobby .lobby-action:hover{background:linear-gradient(100deg,#36536a,#1d3a4c);border-color:#ffe17a;transform:translateX(-2px)}
+#cover.final-lobby .lobby-item{border-radius:5px;background:#0a1927;border-color:#ffffff19;padding:8px 9px}
+#cover.final-lobby #heroShowcase{inset:76px 252px 78px;background:radial-gradient(ellipse at 50% 75%,#5de7ff26,transparent 52%);overflow:hidden}
+#cover.final-lobby #heroShowcase:before{content:"";position:absolute;bottom:7%;width:min(28vw,300px);height:min(28vw,300px);border-radius:50%;border:1px solid #ffe17a66;box-shadow:0 0 0 18px #ffffff05,0 0 45px #42d8ff25;pointer-events:none}
+#cover.final-lobby #heroShowcaseLabel{bottom:17px;color:#fff2b4;letter-spacing:.5px;text-shadow:0 3px 12px #000,0 0 16px #40d9ff77}
+#cover.final-lobby #lobbyStartDock #start{border:1px solid #fff0a4;border-radius:8px;background:linear-gradient(180deg,#ffe978,#ffb900 80%);box-shadow:0 0 26px #ffcf3566,0 5px 0 #9d6500!important}
+#cover.final-lobby .profile{border-radius:9px;border-color:#e5cc7a66;background:linear-gradient(100deg,#142a3d,#081521);box-shadow:0 5px 20px #0005}
+#cover.final-lobby .brand-title{letter-spacing:2px}
+#cover.final-lobby #lobbySideLeft,#cover.final-lobby #lobbySideRight{scroll-behavior:smooth}
+#cover.final-lobby #lobbyDialog{border-radius:14px;background:linear-gradient(145deg,#0d2130f7,#06111bf7);border-color:#f7d24caa}
+#cover.final-lobby #lobbyDialogClose{background:#45242a;border-color:#a85b62;border-radius:6px}
+#cover.final-lobby .lobby-dialog-card{border-radius:8px;background:linear-gradient(145deg,#182f43,#0b1927);border-color:#6f8b9c88}
+#cover.final-lobby .lobby-dialog-card button{border-radius:6px}
+@media(max-width:650px){
+ #cover.final-lobby #heroShowcase{inset:100px 0 90px}
+ #cover.final-lobby #heroShowcase:before{width:210px;height:210px;bottom:10%}
+ #cover.final-lobby #heroShowcaseLabel{font-size:16px}
+ #cover.final-lobby .lobby-section h3{font-size:11px}
+}
 </style>
 </head>
 <body>
