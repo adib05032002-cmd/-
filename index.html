@@ -99,15 +99,20 @@ function makeDroid(x,z,accent=orange){
 }
 function makeHero(){
  const g=new THREE.Group();scene.add(g);
- const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.38,.7,5,10),blue);torso.position.y=1.25;torso.castShadow=true;g.add(torso);
- const vest=new THREE.Mesh(new THREE.BoxGeometry(.52,.42,.2),dark);vest.position.set(0,1.3,-.34);g.add(vest);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.29,16,12),skin);head.position.y=2.05;head.castShadow=true;g.add(head);
- const helmet=new THREE.Mesh(new THREE.SphereGeometry(.32,16,10,0,Math.PI*2,0,Math.PI*.58),blue);helmet.position.y=2.12;helmet.castShadow=true;g.add(helmet);
- const goggles=new THREE.Mesh(new THREE.BoxGeometry(.38,.1,.09),visor);goggles.position.set(0,2.04,-.27);g.add(goggles);
- const pack=new THREE.Mesh(new THREE.BoxGeometry(.5,.55,.25),dark);pack.position.set(0,1.28,.39);g.add(pack);
- for(const s of [-1,1]){const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.13,.5,4,8),blue);arm.position.set(s*.49,1.3,-.02);arm.castShadow=true;g.add(arm);const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.15,.55,4,8),dark);leg.position.set(s*.2,.42,0);leg.castShadow=true;g.add(leg)}
- const glow=new THREE.Mesh(new THREE.TorusGeometry(.58,.045,6,28),cyan);glow.rotation.x=Math.PI/2;glow.position.y=.08;g.add(glow);
- return g;
+ const skin=mat(0xf0c29e),hair=mat(0x39233a),suit=mat(0x237eaf,.35,.15),darkSuit=mat(0x18283c),gold=mat(0xffc83d,.3,.2,0x704000),eyeWhite=mat(0xffffff),iris=mat(0x46dfff,.2,.1,0x087da0);
+ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.36,.68,5,12),suit);torso.position.y=1.25;torso.castShadow=true;g.add(torso);
+ const vest=new THREE.Mesh(new THREE.BoxGeometry(.53,.43,.2),darkSuit);vest.position.set(0,1.3,-.32);g.add(vest);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.29,20,16),skin);head.position.y=2.04;head.castShadow=true;g.add(head);
+ const hairCap=new THREE.Mesh(new THREE.SphereGeometry(.305,16,12,0,Math.PI*2,0,Math.PI*.62),hair);hairCap.position.set(0,2.13,.005);hairCap.castShadow=true;g.add(hairCap);
+ for(let i=0;i<5;i++){const spike=new THREE.Mesh(new THREE.ConeGeometry(.13,.34,5),hair);spike.position.set(-.22+i*.11,2.19,-.015);spike.rotation.z=(i-2)*-.23;spike.castShadow=true;g.add(spike)}
+ const fringe=new THREE.Mesh(new THREE.ConeGeometry(.12,.34,5),hair);fringe.position.set(-.12,2.05,-.24);fringe.rotation.x=-.4;fringe.rotation.z=.2;g.add(fringe);
+ for(const s of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.078,12,10),eyeWhite);eye.scale.set(1,.8,.5);eye.position.set(s*.105,2.045,-.26);g.add(eye);const irisMesh=new THREE.Mesh(new THREE.SphereGeometry(.047,12,10),iris);irisMesh.position.set(s*.105,2.04,-.294);g.add(irisMesh);const pupil=new THREE.Mesh(new THREE.SphereGeometry(.022,8,8),mat(0x101827));pupil.position.set(s*.105,2.04,-.319);g.add(pupil);const shine=new THREE.Mesh(new THREE.SphereGeometry(.014,6,6),eyeWhite);shine.position.set(s*.09,2.06,-.332);g.add(shine);const brow=new THREE.Mesh(new THREE.BoxGeometry(.15,.028,.04),hair);brow.position.set(s*.105,2.14,-.27);g.add(brow)}
+ const nose=new THREE.Mesh(new THREE.SphereGeometry(.032,8,8),skin);nose.position.set(0,1.99,-.29);g.add(nose);
+ const mouth=new THREE.Mesh(new THREE.BoxGeometry(.085,.018,.018),mat(0x8c3d53));mouth.position.set(0,1.94,-.29);g.add(mouth);
+ const collar=new THREE.Mesh(new THREE.TorusGeometry(.24,.065,7,16),gold);collar.position.y=1.65;g.add(collar);
+ const pack=new THREE.Mesh(new THREE.BoxGeometry(.48,.52,.24),darkSuit);pack.position.set(0,1.27,.36);g.add(pack);
+ for(const s of [-1,1]){const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.19,12,10),gold);shoulder.position.set(s*.43,1.52,-.01);g.add(shoulder);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.48,5,8),suit);arm.position.set(s*.48,1.27,-.02);arm.castShadow=true;g.add(arm);const glove=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),darkSuit);glove.position.set(s*.49,.94,-.04);g.add(glove);const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.145,.52,5,8),darkSuit);leg.position.set(s*.19,.42,0);g.add(leg);const boot=new THREE.Mesh(new THREE.BoxGeometry(.24,.13,.32),gold);boot.position.set(s*.19,.13,-.04);g.add(boot)}
+ const glow=new THREE.Mesh(new THREE.TorusGeometry(.58,.045,6,28),cyan);glow.rotation.x=Math.PI/2;glow.position.y=.08;g.add(glow);return g;
 }
 const hero=makeHero();hero.position.set(0,0,8);
 const obstacles=[];
