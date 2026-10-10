@@ -16,6 +16,29 @@ button{border:1px solid #6ee7d2;background:#103a43;color:white;border-radius:10p
 h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px);color:#7cf6df}#card p{line-height:1.9;color:#d4e8ed}#start{font-size:18px;padding:13px 30px;background:#087e78}
 #message{position:fixed;z-index:3;top:42%;left:50%;transform:translate(-50%,-50%);font-size:clamp(22px,4vw,40px);font-weight:bold;text-shadow:0 3px 15px #000;pointer-events:none;text-align:center}
 
+
+/* Dedicated character selection screen */
+#cover.characters-view .lobby-top{background:#050b16ed;justify-content:center}
+#cover.characters-view .brand,#cover.characters-view .profile{display:none}
+#cover.characters-view .lobby-nav{flex:0 1 auto}
+#cover.characters-view .lobby-left,#cover.characters-view .lobby-chat,#cover.characters-view .lobby-controls{display:none!important}
+#cover.characters-view .lobby-bottom{inset:86px 3vw 82px;display:block;overflow:auto}
+#cover.characters-view .character-picker{width:100%;height:100%;min-width:0;box-sizing:border-box;background:linear-gradient(145deg,#08182bea,#11152ced);border:1px solid #6ee7d2aa;padding:18px;overflow:auto}
+#cover.characters-view .character-picker>b{font-size:clamp(22px,3vw,34px);color:#7cf6df;text-align:center;margin:0 0 6px}
+#cover.characters-view #characterStatus{text-align:center!important;font-size:14px;margin-bottom:15px!important}
+#cover.characters-view .character-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:12px;overflow:visible}
+#cover.characters-view .character-choice{width:100%;min-width:0;padding:8px;background:linear-gradient(160deg,#1a3148,#091521);border:1px solid #547086;gap:8px;transition:transform .15s,border-color .15s}
+#cover.characters-view .character-choice:hover{transform:translateY(-3px);border-color:#7cf6df}
+#cover.characters-view .character-choice.chosen{border:2px solid #ffcc27;box-shadow:0 0 18px #ffcc2755}
+#cover.characters-view .portrait{width:100%;height:clamp(100px,17vh,165px);font-size:42px;background:#101d2c}
+#cover.characters-view .character-choice small{font-size:14px;font-weight:bold;padding:3px}
+#cover.characters-view .play-panel{position:fixed;z-index:5;left:50%;bottom:10px;transform:translateX(-50%);width:min(300px,85vw);padding:0;background:transparent;border:0}
+#cover.characters-view .play-panel>*:not(#start){display:none!important}
+#cover.characters-view #start{padding:12px 24px;font-size:20px}
+#cover.play-view .character-picker{display:none}
+#cover.play-view .lobby-bottom{justify-content:flex-end}
+@media(max-width:760px){#cover.characters-view .lobby-top{padding:10px}#cover.characters-view .lobby-bottom{inset:76px 10px 78px}#cover.characters-view .character-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}#cover.characters-view .character-picker{padding:10px}#cover.characters-view .portrait{height:100px}}
+
 /* Battle-royale inspired lobby interface */
 #cover{display:block;overflow:hidden;background:linear-gradient(180deg,#0713217d 0%,#06111b25 42%,#061019bb 100%);padding:0;color:#fff}
 #cover:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 10%,#06111b33 70%,#03080fd9 100%);pointer-events:none}
@@ -115,6 +138,21 @@ function portraitContent(index){
  return index<files.length ? '<img src="'+files[index]+'" alt="'+characterNames[index]+'" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:4px">' : portraitSvg(index);
 }
 document.querySelectorAll('[data-character]').forEach(btn=>{const i=Number(btn.dataset.character);const p=btn.querySelector('.portrait');if(p)p.innerHTML=portraitContent(i);});
+
+const lobbyCover=document.querySelector('#cover');
+function showLobbyTab(tab){
+ if(!lobbyCover)return;
+ lobbyCover.classList.toggle('characters-view',tab==='characters');
+ lobbyCover.classList.toggle('play-view',tab!=='characters');
+ document.querySelectorAll('.lobby-nav [data-tab]').forEach(b=>b.classList.toggle('nav-active',b.dataset.tab===tab));
+ if(tab==='characters'){
+  const status=document.querySelector('#characterStatus');
+  if(status)status.textContent='اختاري مقاتلك المفضل من الصور الأصلية';
+ }
+}
+document.querySelectorAll('.lobby-nav [data-tab]').forEach(btn=>btn.addEventListener('click',()=>showLobbyTab(btn.dataset.tab)));
+showLobbyTab('play');
+
 const profileAvatar=document.querySelector('.avatar-mini');if(profileAvatar)profileAvatar.innerHTML=portraitSvg(0);
 document.querySelectorAll('[data-character]').forEach(btn=>btn.addEventListener('click',()=>{selectedCharacter=Number(btn.dataset.character);document.querySelectorAll('[data-character]').forEach(b=>b.classList.toggle('chosen',b===btn));const count=document.querySelector('#characterCount');if(count)count.textContent=(selectedCharacter+1)+' / 20';const avatar=document.querySelector('.avatar-mini');if(avatar)avatar.innerHTML=portraitContent(selectedCharacter);if(typeof applyCharacterStyle==='function')applyCharacterStyle(selectedCharacter);const msg=document.querySelector('#characterStatus');if(msg)msg.textContent='تم اختيار '+characterNames[selectedCharacter];}));
 const featureDialog=document.createElement('div');featureDialog.className='feature-dialog';featureDialog.innerHTML='<h2 id="featureTitle">الإعدادات</h2><p id="featureText">اختر ما تريد تعديله.</p><button id="closeFeature">إغلاق</button>';document.body.appendChild(featureDialog);document.querySelector('#closeFeature').onclick=()=>featureDialog.classList.remove('open');
