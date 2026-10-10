@@ -40,7 +40,7 @@ footer{padding:15px;color:#91a6a5;font-size:12px}
   <div class="stat">👾 الأعداء: <b id="left">4</b></div>
 </div>
 
-<canvas id="game" width="800" height="500" aria-label="ساحة اللعبة"></canvas>
+<canvas id="game" width="800" height="500" tabindex="0" aria-label="ساحة اللعبة"></canvas>
 <div id="message">استعد للمهمة يا بطل!</div>
 <div class="actions">
   <button class="primary" id="start">ابدأ اللعبة</button>
@@ -123,8 +123,9 @@ function spawnEnemy(){
 function begin(){
   if(ended)reset();
   started=true;running=true;paused=false;
-  $("message").textContent="تحرّك، تجنّب المقذوفات وأكمل المرحلة!";
+  $("message").textContent="تحرّك بالأسهم أو WASD، ثم انقر داخل الساحة للتفاعل.";
   $("start").textContent="اللعب مستمر";
+  canvas.focus();
 }
 function shoot(){
   if(!running||paused||ended||fireCooldown>0)return;
@@ -291,13 +292,18 @@ canvas.addEventListener("pointerdown",ev=>{
   aim=pointerPos(ev);fireHeld=true;shoot();
 });
 window.addEventListener("pointerup",()=>fireHeld=false);
+const movementKeys = {ArrowUp:"up", ArrowDown:"down", ArrowLeft:"left", ArrowRight:"right", KeyW:"w", KeyA:"a", KeyS:"s", KeyD:"d"};
 window.addEventListener("keydown",ev=>{
   const k=ev.key.toLowerCase();
-  if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))ev.preventDefault();
+  if(movementKeys[ev.code] || ["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k)) ev.preventDefault();
+  if(movementKeys[ev.code]) keys.add(movementKeys[ev.code]);
   keys.add(k);
   if(k===" "){shoot();}
 });
-window.addEventListener("keyup",ev=>keys.delete(ev.key.toLowerCase()));
+window.addEventListener("keyup",ev=>{
+  keys.delete(ev.key.toLowerCase());
+  if(movementKeys[ev.code]) keys.delete(movementKeys[ev.code]);
+});
 document.querySelectorAll("[data-key]").forEach(btn=>{
   const k=btn.dataset.key;
   const map={up:"arrowup",down:"arrowdown",left:"arrowleft",right:"arrowright"};
