@@ -140,6 +140,12 @@ h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px);color:#7cf6df}#card p{line-hei
 #gameLootHint{position:fixed;z-index:4;left:50%;top:64%;transform:translateX(-50%);padding:9px 15px;background:#07151de8;border:1px solid #7bffb0;color:#e9fff1;border-radius:6px;display:none;text-align:center;font-size:13px}
 #gameLootHint.show{display:block}
 #hud #walletHud{color:#ffdc57}
+#healWrap{position:fixed;z-index:5;right:12px;bottom:92px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+#healOptions{display:none;flex-direction:column;gap:6px;padding:8px;background:#091722ed;border:1px solid #6ee7d2;border-radius:12px;min-width:220px}
+#healOptions.open{display:flex}
+#healOptions button{width:100%;text-align:right}
+#healStatus{font-size:12px;color:#a9fff0;max-width:230px}
+@media(max-width:700px){#healWrap{right:8px;bottom:155px}#healOptions{min-width:190px}#hud{font-size:12px;min-width:150px}}
 
 </style>
 </head>
@@ -148,6 +154,12 @@ h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px);color:#7cf6df}#card p{line-hei
 <div id="hud" class="panel"><strong class="accent">المقاتل الأخير</strong><br>النقاط: <span id="score">0</span><br>الخصوم المتبقون: <span id="left">5</span><br>الأداة: <span id="toolName">نبضة الطاقة</span><br>العملات: <span id="walletHud">500</span><br><span class="muted">الطاقة: <span id="energy">100</span>%</span></div>
 <div id="help" class="panel"><b class="accent">طريقة اللعب</b><br>W A S D أو الأسهم: الحركة<br>حرّك الفأرة لتدوير الكاميرا<br>انقر بالفأرة: نبضة طاقة خيالية<br>Q أو زر «تبديل الأداة»: تغيير الأداة<br>G: قنبلة · H: جدار جلو<br><span class="muted">درع الطاقة يحميك، وحقل الإبطاء يوقف الخصوم مؤقتًا.</span></div>
 <div id="bottom" class="panel"><button id="switch">تبديل الأداة (Q)</button><button id="shield">درع الطاقة (E)</button></div>
+<div id="healWrap"><button id="healToggle" type="button">🩹 العلاج</button><div id="healOptions">
+<button type="button" data-heal="1">النوع 1 · +25 دم · الثبات مطلوب</button>
+<button type="button" data-heal="2">النوع 2 · تعبئة الدم كاملًا · الثبات مطلوب</button>
+<button type="button" data-heal="3">النوع 3 · +25 دم · الحركة مسموحة</button>
+<button type="button" data-heal="4">النوع 4 · تعبئة الدم كاملًا · الحركة مسموحة</button>
+<div id="healStatus">اختاري نوع العلاج. مدة الاستخدام 2.5 ثانية.</div></div></div>
 <div id="message"></div><div id="gameLootHint"></div>
 <div id="cover">
   <header class="lobby-top">
@@ -413,10 +425,23 @@ addDistrictSign('POCHINOK',-8,-20,0xffd15a);addDistrictSign('PEAK',8,-42,0x7de8f
 for(const p of [[-13,-19],[15,-10],[-17,2],[18,18],[-12,28],[12,-35],[-24,8],[25,-22],[4,32]])spawnLoot(new THREE.Vector3(p[0],0,p[1]),{weapon:Math.floor(Math.random()*weaponCatalog.length)});
 function collectLoot(drop){
  if(drop.contents.weapon!==undefined){const wi=drop.contents.weapon;ownedWeapons.add(wi);equippedWeapon=wi;showLootHint('وجدت '+weaponCatalog[wi].name+' داخل صندوق الغنائم')}
- else {energy=Math.min(100,energy+25);gameCoins+=35;showLootHint('جمعت إمدادات: +25 طاقة و35 عملة')}
+ else {energy=Math.min(100,energy+25);gameCoins+=35;showLootHint('جمعت إمدادات: +25 دم و35 عملة')}
  refreshWallet();scene.remove(drop.group);const ix=lootDrops.indexOf(drop);if(ix>=0)lootDrops.splice(ix,1);
 }
 const tools=[{name:'نبضة الطاقة',color:0x65ffe1},{name:'درع الطاقة',color:0x5ca9ff},{name:'حقل الإبطاء',color:0xc99aff}];let selected=0,score=0,energy=100,playing=false,ended=false,shieldTime=0,slowTime=0,fireCooldown=0;
+let healing=null;
+const healOptions=document.querySelector('#healOptions'),healStatus=document.querySelector('#healStatus');
+document.querySelector('#healToggle').addEventListener('click',()=>{if(!playing||ended){showLootHint('ابدئي المباراة أولًا');return}healOptions.classList.toggle('open')});
+document.querySelectorAll('[data-heal]').forEach(btn=>btn.addEventListener('click',()=>{
+ if(!playing||ended||energy>=100){showLootHint(energy>=100?'الدم كامل بالفعل':'ابدئي المباراة أولًا');return}
+ const type=Number(btn.dataset.heal);
+ healing={type,elapsed:0,startEnergy:energy};
+ healStatus.textContent=type<=2?'استعمال العلاج... ابقي ثابتة!':'استعمال العلاج... يمكنك الحركة والجري.';
+ healOptions.classList.remove('open');
+ showLootHint('بدأ استخدام العلاج');
+}));
+function cancelHealing(msg){if(!healing)return;healing=null;healStatus.textContent=msg||'تم إلغاء العلاج.';showLootHint(msg||'تحركتِ، أُلغي العلاج')}
+
 const keys=new Set();let yaw=0,pitch=.12,mouseDown=false;
 const projectiles=[],fx=[];
 function makeOrb(pos,dir,color,speed=26,fromBot=false,damage=1){const mesh=new THREE.Mesh(new THREE.SphereGeometry(fromBot?.13:.2,12,10),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.95}));mesh.position.copy(pos);scene.add(mesh);const glow=new THREE.PointLight(color,2,3);mesh.add(glow);projectiles.push({mesh,dir:dir.clone().normalize(),speed,life:2.5,fromBot,damage});}
@@ -433,7 +458,7 @@ document.querySelectorAll('.character-choice').forEach(btn=>btn.addEventListener
 document.querySelectorAll('#touchControls [data-hold]').forEach(btn=>{const key=btn.dataset.hold;const release=()=>keys.delete(key);btn.addEventListener('pointerdown',e=>{e.preventDefault();if(playing)keys.add(key)});['pointerup','pointercancel','pointerleave'].forEach(ev=>btn.addEventListener(ev,release));});document.querySelector('#touchFire').addEventListener('pointerdown',e=>{e.preventDefault();if(playing)shoot()});document.querySelector('#touchTool').addEventListener('click',()=>{if(playing)setTool(selected+1)});document.querySelector('#touchShield').addEventListener('click',()=>{if(playing)activateShield()});document.querySelector('#touchGrenade').addEventListener('click',throwGrenade);document.querySelector('#touchGloo').addEventListener('click',deployGloo);
 document.querySelector('#lobbyStartDock #start').onclick=()=>{
  if(ended||bots.every(b=>b.hp<=0)||energy<=0){
-  energy=100;score=0;shieldTime=0;slowTime=0;yaw=0;pitch=.12;hero.position.set(0,0,8);
+  energy=100;healing=null;healStatus.textContent='اختاري نوع العلاج. مدة الاستخدام 2.5 ثانية.';score=0;shieldTime=0;slowTime=0;yaw=0;pitch=.12;hero.position.set(0,0,8);
   bots.forEach((b,i)=>{b.hp=3;b.slow=0;b.group.visible=true;b.group.position.set(Math.cos(i*Math.PI/4)*18,0,Math.sin(i*Math.PI/4)*18)});
   for(let i=lootDrops.length-1;i>=0;i--){scene.remove(lootDrops[i].group)}lootDrops.length=0;
   for(const p of [[-13,-19],[15,-10],[-17,2],[18,18],[-12,28],[12,-35],[-24,8],[25,-22],[4,32]])spawnLoot(new THREE.Vector3(p[0],0,p[1]),{weapon:Math.floor(Math.random()*weaponCatalog.length)});
@@ -447,9 +472,10 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 canvas.addEventListener('mousemove',e=>{if(!playing||!document.pointerLockElement)return;yaw-=e.movementX*.003*sensitivity;pitch=Math.max(-.15,Math.min(.55,pitch+e.movementY*.002*sensitivity));});
 canvas.addEventListener('click',()=>{if(playing&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 function clampArena(o){o.x=Math.max(-32,Math.min(32,o.x));o.z=Math.max(-32,Math.min(32,o.z))}
+function moveIsMoving(){return ['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].some(k=>keys.has(k))}
 function update(dt){
  if(!playing||ended)return;
- fireCooldown=Math.max(0,fireCooldown-dt);shieldTime=Math.max(0,shieldTime-dt);slowTime=Math.max(0,slowTime-dt);energy=Math.min(100,energy+dt*4);
+ fireCooldown=Math.max(0,fireCooldown-dt);shieldTime=Math.max(0,shieldTime-dt);slowTime=Math.max(0,slowTime-dt);if(healing){healing.elapsed+=dt;if(healing.type<=2&&moveIsMoving()){cancelHealing('تحركتِ، أُلغي العلاج.');}else if(healing.elapsed>=2.5){energy=Math.min(100,healing.type===1||healing.type===3?healing.startEnergy+25:100);healing=null;healStatus.textContent='اكتمل العلاج.';showLootHint('تمت تعبئة الدم!')}}
  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)),right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw)),move=new THREE.Vector3();
  if(keys.has('w')||keys.has('arrowup'))move.add(forward);if(keys.has('s')||keys.has('arrowdown'))move.sub(forward);if(keys.has('d')||keys.has('arrowright'))move.add(right);if(keys.has('a')||keys.has('arrowleft'))move.sub(right);
  if(move.lengthSq()>0){move.normalize();hero.position.addScaledVector(move,dt*8);hero.rotation.y=Math.atan2(-move.x,-move.z)}clampArena(hero.position);
@@ -463,7 +489,7 @@ function update(dt){
  if(remove){scene.remove(p.mesh);projectiles.splice(i,1)}}
  for(let i=fx.length-1;i>=0;i--){const f=fx[i];f.life-=dt;f.mesh.scale.multiplyScalar(1+dt*3);f.mesh.material.opacity=Math.max(0,f.life/f.max);if(f.life<=0){scene.remove(f.mesh);fx.splice(i,1)}}
  for(let i=lootDrops.length-1;i>=0;i--){const d=lootDrops[i];d.phase+=dt;d.smoke.scale.x=.8+Math.sin(d.phase)*.18;d.smoke.scale.z=.8+Math.cos(d.phase)*.18;d.group.rotation.y+=dt*.25;if(hero.position.distanceTo(d.group.position)<2.1)collectLoot(d)}
- if(energy<=0){ended=true;document.querySelector('#message').textContent='انتهت الطاقة! اضغطي ابدأ اللعب من جديد';playing=false;document.querySelector('#cover').style.display='block';}
+ if(energy<=0){energy=0;healing=null;ended=true;document.querySelector('#message').textContent='نفد الدم! انتهت المباراة، اضغطي ابدأ اللعب من جديد';playing=false;document.querySelector('#cover').style.display='block';}
  if(bots.every(b=>b.hp<=0)){ended=true;gameCoins+=250;playerLevel++;refreshWallet();document.querySelector('#message').textContent='فزت بالجولة! +250 عملة ✨';playing=false;document.querySelector('#cover').style.display='block';}
  updateHud();
 }
