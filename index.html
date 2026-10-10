@@ -400,6 +400,15 @@ function spawnLoot(position, contents){
  const light=new THREE.PointLight(0x49ff80,2.3,7);light.position.y=1.4;g.add(light);
  lootDrops.push({group:g,contents,smoke,phase:Math.random()*6.28});
 }
+// أسماء مناطق أصلية داخل خريطة الأنمي، مع لافتات واضحة للاستكشاف
+function addDistrictSign(label,x,z,color=0xffd15a){
+ const group=new THREE.Group();group.position.set(x,0,z);
+ const post=new THREE.Mesh(new THREE.BoxGeometry(.14,2.1,.14),mat(0x34465a));post.position.y=1;group.add(post);
+ const plate=new THREE.Mesh(new THREE.BoxGeometry(4.8,.9,.18),mat(0x132d45,.4,.2));plate.position.y=2.05;group.add(plate);
+ const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const ctx=canvas.getContext('2d');ctx.fillStyle='#10283b';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#'+color.toString(16).padStart(6,'0');ctx.lineWidth=8;ctx.strokeRect(5,5,502,118);ctx.fillStyle='#ffffff';ctx.font='bold 42px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,256,64);
+ const texture=new THREE.CanvasTexture(canvas);const sign=new THREE.Mesh(new THREE.PlaneGeometry(4.5,.72),new THREE.MeshBasicMaterial({map:texture,transparent:true}));sign.position.set(0,2.05,-.105);group.add(sign);scene.add(group);
+}
+addDistrictSign('POCHINOK',-8,-20,0xffd15a);addDistrictSign('PEAK',8,-42,0x7de8ff);addDistrictSign('BIMASAKTI STRIP',-18,5,0xff8c9c);addDistrictSign('RIVERSIDE',18,20,0x8affcb);addDistrictSign('CLOCK TOWER',3,34,0xc9a5ff);
 // صناديق إمدادات موزعة قرب المباني ليجد اللاعب العتاد أثناء الاستكشاف
 for(const p of [[-13,-19],[15,-10],[-17,2],[18,18],[-12,28],[12,-35],[-24,8],[25,-22],[4,32]])spawnLoot(new THREE.Vector3(p[0],0,p[1]),{weapon:Math.floor(Math.random()*weaponCatalog.length)});
 function collectLoot(drop){
@@ -422,7 +431,15 @@ function updateHud(){document.querySelector('#score').textContent=score;document
 document.querySelector('#switch').onclick=()=>setTool(selected+1);document.querySelector('#shield').onclick=activateShield;
 document.querySelectorAll('.character-choice').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.character-choice').forEach(b=>b.classList.remove('chosen'));btn.classList.add('chosen');const n=Number(btn.dataset.character);const colors=[0x168bba,0xb77d55,0x9da7b3,0x167ba5];hero.traverse(o=>{if(o.isMesh&&o.material&&o.material.color&&o.material.color.getHex()===0x168bba)o.material=mat(colors[n],.35,.2,n===3?0x064a80:0)});}));
 document.querySelectorAll('#touchControls [data-hold]').forEach(btn=>{const key=btn.dataset.hold;const release=()=>keys.delete(key);btn.addEventListener('pointerdown',e=>{e.preventDefault();if(playing)keys.add(key)});['pointerup','pointercancel','pointerleave'].forEach(ev=>btn.addEventListener(ev,release));});document.querySelector('#touchFire').addEventListener('pointerdown',e=>{e.preventDefault();if(playing)shoot()});document.querySelector('#touchTool').addEventListener('click',()=>{if(playing)setTool(selected+1)});document.querySelector('#touchShield').addEventListener('click',()=>{if(playing)activateShield()});document.querySelector('#touchGrenade').addEventListener('click',throwGrenade);document.querySelector('#touchGloo').addEventListener('click',deployGloo);
-document.querySelector('#lobbyStartDock #start').onclick=()=>{document.querySelector('#cover').style.display='none';playing=true;ended=false;canvas.focus();document.querySelector('#message').textContent='انطلق! ابحث عن الأسلحة والغنائم';setTimeout(()=>{if(playing)document.querySelector('#message').textContent=''},1800)};
+document.querySelector('#lobbyStartDock #start').onclick=()=>{
+ if(ended||bots.every(b=>b.hp<=0)||energy<=0){
+  energy=100;score=0;shieldTime=0;slowTime=0;yaw=0;pitch=.12;hero.position.set(0,0,8);
+  bots.forEach((b,i)=>{b.hp=3;b.slow=0;b.group.visible=true;b.group.position.set(Math.cos(i*Math.PI/4)*18,0,Math.sin(i*Math.PI/4)*18)});
+  for(let i=lootDrops.length-1;i>=0;i--){scene.remove(lootDrops[i].group)}lootDrops.length=0;
+  for(const p of [[-13,-19],[15,-10],[-17,2],[18,18],[-12,28],[12,-35],[-24,8],[25,-22],[4,32]])spawnLoot(new THREE.Vector3(p[0],0,p[1]),{weapon:Math.floor(Math.random()*weaponCatalog.length)});
+ }
+ document.querySelector('#cover').style.display='none';playing=true;ended=false;canvas.focus();document.querySelector('#message').textContent='انطلق! استكشف الأحياء وابحث عن الأسلحة والغنائم';updateHud();setTimeout(()=>{if(playing)document.querySelector('#message').textContent=''},2200)
+};
 window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys.add(k);if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='q')setTool(selected+1);if(k==='e')activateShield();if(k==='g')throwGrenade();if(k==='h')deployGloo();if(k===' '||k==='enter')shoot()});
 window.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
 canvas.addEventListener('click',()=>{if(playing)shoot()});
