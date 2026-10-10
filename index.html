@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>المقاتل الأخير — ساحة الطاقة</title>
+<title>WAR GAME — باتل رويال أنمي</title>
 <style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#08131d;color:#fff;font-family:Tahoma,Arial,sans-serif;overflow:hidden}
 #game{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none}
@@ -30,6 +30,19 @@ h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px);color:#7cf6df}#card p{line-hei
 @media(max-width:560px){.brand-title{font-size:23px}.brand-sub{font-size:11px}.lobby-left{display:none}.lobby-bottom{flex-direction:column;align-items:stretch}.character-picker,.play-panel{width:100%}.character-list{justify-content:space-around}.character-choice{flex:1}.portrait{width:100%;height:42px}.play-panel{max-width:none}.lobby-controls{top:auto;bottom:190px;flex-direction:row}.lobby-controls span{width:34px;height:34px;font-size:15px}}
 
 @media(max-width:650px){#help{top:auto;bottom:88px;left:8px;max-width:220px;font-size:11px}#hud{top:8px;right:8px;font-size:13px;min-width:150px}#bottom{bottom:8px;gap:5px}button{padding:8px 10px;font-size:12px}}
+
+/* Anime-inspired original character styling */
+.portrait{font-size:43px!important;position:relative;overflow:hidden;text-shadow:0 3px 5px #000;box-shadow:inset 0 -18px 20px #07101c99}
+.portrait-one{background:radial-gradient(ellipse at 50% 20%,#d9b18a 0 18%,transparent 19%),linear-gradient(135deg,#e7c65a,#344b66 55%,#111c2a)!important}
+.portrait-two{background:radial-gradient(ellipse at 50% 25%,#f0c9a8 0 18%,transparent 19%),linear-gradient(135deg,#d36c40,#5a2430 55%,#111c2a)!important}
+.portrait-three{background:radial-gradient(ellipse at 50% 24%,#f4d1b8 0 18%,transparent 19%),linear-gradient(135deg,#78c9e7,#4e4d8c 55%,#111c2a)!important}
+.portrait-four{background:radial-gradient(ellipse at 50% 25%,#b7f4ff 0 18%,transparent 19%),linear-gradient(135deg,#5af0d2,#1678a0 55%,#111c2a)!important}
+.character-choice{transition:transform .15s,border-color .15s;cursor:pointer}.character-choice:hover{transform:translateY(-4px)}
+#cover{background:linear-gradient(180deg,#06111b40,#061019a8),radial-gradient(ellipse at 50% 43%,#5da4c855,transparent 45%),linear-gradient(135deg,#14283e,#6a8a9b 45%,#344d3d 72%,#0a1720)!important}
+#cover:before{background:radial-gradient(ellipse at 50% 45%,#9de7ff20,transparent 40%),linear-gradient(110deg,#07101b77,transparent 45%,#07101b88)!important}
+.brand-title{color:#f8fbff;text-shadow:0 0 16px #65caff88,0 4px 5px #000!important}.brand-sub{color:#ffd447!important}
+#start{letter-spacing:.4px;box-shadow:0 0 18px #ffc21c66,0 5px 0 #9d6500!important}
+@media(max-width:700px){.portrait{font-size:32px!important}}
 </style>
 </head>
 <body>
@@ -47,10 +60,10 @@ h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px);color:#7cf6df}#card p{line-hei
   <div class="lobby-left"><div class="players-box">♟ <span>عدد اللاعبين</span><b>100</b></div><div class="map-card"><div class="map-art"><span class="map-ring"></span><span class="map-arrow">▲</span></div><b>خريطة ساحة المعركة</b><small>المنطقة الآمنة · 00:42</small></div></div>
   <div class="lobby-bottom">
     <div class="character-picker"><b>اختر شخصيتك</b><div class="character-list">
-      <button class="character-choice chosen" data-character="0"><span class="portrait portrait-one">◉</span><small>الحارس</small></button>
-      <button class="character-choice" data-character="1"><span class="portrait portrait-two">◉</span><small>الكشّافة</small></button>
-      <button class="character-choice" data-character="2"><span class="portrait portrait-three">◉</span><small>الشبح</small></button>
-      <button class="character-choice" data-character="3"><span class="portrait portrait-four">◉</span><small>المتقدم</small></button>
+      <button class="character-choice chosen" data-character="0"><span class="portrait portrait-one">🪖</span><small>الحارس</small></button>
+      <button class="character-choice" data-character="1"><span class="portrait portrait-two">🥷</span><small>الكشّافة</small></button>
+      <button class="character-choice" data-character="2"><span class="portrait portrait-three">👩🏻‍🚀</span><small>الشبح</small></button>
+      <button class="character-choice" data-character="3"><span class="portrait portrait-four">🤖</span><small>المتقدم</small></button>
     </div></div>
     <div class="play-panel"><label>وضع اللعب</label><div class="mode-select">♟　 باتل رويال <span>⌄</span></div><button id="start">◈　ابدأ اللعب</button><small>نسخة تجريبية · ضد روبوتات</small></div>
   </div>
