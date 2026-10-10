@@ -165,6 +165,15 @@ h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px);color:#7cf6df}#card p{line-hei
  #cover.final-lobby #heroShowcaseLabel{font-size:16px}
  #cover.final-lobby .lobby-section h3{font-size:11px}
 }
+
+/* Recovery: keep the main lobby panels visible in the default play view */
+#cover.final-lobby #lobbySideLeft,
+#cover.final-lobby #lobbySideRight{display:flex!important;visibility:visible!important;opacity:1!important}
+#cover.final-lobby #heroShowcase{display:flex!important;visibility:visible!important}
+#cover.final-lobby.play-view .lobby-bottom{display:none!important}
+#cover.final-lobby:not(.characters-view) #lobbySideLeft,
+#cover.final-lobby:not(.characters-view) #lobbySideRight{display:flex!important}
+
 </style>
 </head>
 <body>
